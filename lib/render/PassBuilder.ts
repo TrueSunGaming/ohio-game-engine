@@ -3,7 +3,7 @@ import type { InitializedRenderer } from "./Renderer"
 export class PassBuilder {
     private renderer: InitializedRenderer;
     
-    protected backgroundColor: GPUColor = { r: 0, g: 0, b: 0, a: 1 };
+    protected backgroundColor: GPUColor = { r: 0, g: 0, b: 0, a: 0 };
 
     constructor(renderer: InitializedRenderer) {
         this.renderer = renderer;
