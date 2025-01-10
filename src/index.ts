@@ -10,7 +10,7 @@ setInterval(() => {
 
     const pass: GPURenderPassEncoder = new ohio.PassBuilder(renderer)
         .setBackgroundColor(ohio.Color.HSV(t, 1, 1, 1))
-        .build()
+        .build();
 
     renderer.renderPass(pass);
 }, 50 / 3);
