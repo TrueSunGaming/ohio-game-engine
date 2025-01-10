@@ -1,9 +1,13 @@
-import type { Renderer } from "./Renderer"
+import type { InitializedRenderer } from "./Renderer"
 
 export class PassBuilder {
-    private renderer: Renderer;
+    private renderer: InitializedRenderer;
     
     protected backgroundColor: GPUColor = { r: 0, g: 0, b: 0, a: 1 };
+
+    constructor(renderer: InitializedRenderer) {
+        this.renderer = renderer;
+    }
 
     setBackgroundColor(color: GPUColor): PassBuilder {
         this.backgroundColor = color;
@@ -11,7 +15,7 @@ export class PassBuilder {
     }
     
     build(): GPURenderPassEncoder {
-        if (!this.renderer) throw new Error("Cannot build a pass without a renderer");
+        if (!this.renderer) throw new Error("Cannot build a pass without an initialized renderer");
 
         return this.renderer.encoder.beginRenderPass({
             colorAttachments: [{

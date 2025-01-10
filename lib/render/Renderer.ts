@@ -1,16 +1,16 @@
 export class Renderer {
     canvas: HTMLCanvasElement;
-    ctx: GPUCanvasContext;
-    adapter: GPUAdapter;
-    device: GPUDevice;
-    canvasFormat: GPUTextureFormat;
-    encoder: GPUCommandEncoder;
+    ctx?: GPUCanvasContext;
+    adapter?: GPUAdapter;
+    device?: GPUDevice;
+    canvasFormat?: GPUTextureFormat;
+    encoder?: GPUCommandEncoder;
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
     }
 
-    async init(): Promise<void> {
+    async init(): Promise<Required<Renderer>> {
         Renderer.checkGPU();
 
         this.initContext();
@@ -19,6 +19,19 @@ export class Renderer {
         await this.initDevice();
         this.configureContext();
         this.initEncoder();
+
+        if (!this.isInitialized()) throw new Error("Renderer initializer is incomplete, some fields are undefined");
+        return this;
+    }
+
+    isInitialized(): this is Required<Renderer> {
+        if (!this.ctx) return false;
+        if (!this.adapter) return false;
+        if (!this.device) return false;
+        if (!this.canvasFormat) return false;
+        if (!this.encoder) return false;
+
+        return true;
     }
 
     static checkGPU(): void {
@@ -70,7 +83,14 @@ export class Renderer {
     }
 
     renderPass(pass: GPURenderPassEncoder): void {
+        if (!this.device) throw new Error("Cannot render a pass without a device");
+        if (!this.encoder) throw new Error("Cannot render a pass without an encoder");
+
         pass.end();
         this.device.queue.submit([this.encoder.finish()]);
+
+        this.initEncoder();
     }
 }
+
+export type InitializedRenderer = Required<Renderer>;

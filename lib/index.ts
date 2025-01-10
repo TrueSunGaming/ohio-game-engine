@@ -2,3 +2,4 @@
 
 export * from "./render/Renderer";
 export * from "./render/PassBuilder";
+export * from "./render/Color"
