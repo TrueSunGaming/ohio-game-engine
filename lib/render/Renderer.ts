@@ -1,3 +1,6 @@
+import { Color } from "./Color";
+import { PassBuilder } from "./PassBuilder";
+
 export class Renderer {
     canvas: HTMLCanvasElement;
     ctx?: GPUCanvasContext;
@@ -90,6 +93,12 @@ export class Renderer {
         this.device.queue.submit([this.encoder.finish()]);
 
         this.initEncoder();
+    }
+
+    getClear(color: Color = Color.RGB()): GPURenderPassEncoder {
+        if (!this.isInitialized()) throw new Error("Cannot clear a renderer before it is initialized");
+
+        return new PassBuilder(this).setBackgroundColor(color).build();
     }
 }
 

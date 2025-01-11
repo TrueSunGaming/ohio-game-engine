@@ -3,7 +3,8 @@ import type { InitializedRenderer } from "./Renderer"
 export class PassBuilder {
     private renderer: InitializedRenderer;
     
-    protected backgroundColor: GPUColor = { r: 0, g: 0, b: 0, a: 0 };
+    protected backgroundColor?: GPUColor;
+    protected previousTexture?: GPUTexture
 
     constructor(renderer: InitializedRenderer) {
         this.renderer = renderer;
@@ -13,13 +14,18 @@ export class PassBuilder {
         this.backgroundColor = color;
         return this;
     }
+
+    setPreviousTexture(texture: GPUTexture): PassBuilder {
+        this.previousTexture = texture;
+        return this;
+    }
     
     build(): GPURenderPassEncoder {
         if (!this.renderer) throw new Error("Cannot build a pass without an initialized renderer");
 
         return this.renderer.encoder.beginRenderPass({
             colorAttachments: [{
-                view: this.renderer.ctx.getCurrentTexture().createView(),
+                view: (this.previousTexture ?? this.renderer.ctx.getCurrentTexture()).createView(),
                 loadOp: "clear",
                 storeOp: "store",
                 clearValue: this.backgroundColor

@@ -66,6 +66,10 @@ export class Color implements GPUColorDict {
         return [this.r, this.g, this.b, this.a];
     }
 
+    get vec4f(): Float32Array {
+        return new Float32Array(this.rgb);
+    }
+
     get hsv(): [number, number, number, number] {
         return [...Color.RGBtoHSV(this.r, this.g, this.b), this.a];
     }
