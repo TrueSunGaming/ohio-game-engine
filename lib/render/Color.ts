@@ -3,6 +3,7 @@ export class Color implements GPUColorDict {
     g = 0;
     b = 0;
     a = 1;
+    premultiplied = true;
 
     static RGBtoHSV(r: number, g: number, b: number): [number, number, number] {
         const cmax: number = Math.max(r, g, b);
@@ -47,19 +48,24 @@ export class Color implements GPUColorDict {
         return [c + m, m, x + m];
     }
 
-    static RGB(r = 0, g = 0, b = 0, a = 1): Color {
+    static premultiplyAlpha([r, g, b, a]: [number, number, number, number]): [number, number, number, number] {
+        return [r * a, g * a, b * a, a];
+    }
+
+    static RGB(r = 0, g = 0, b = 0, a = 1, premultiplied = true): Color {
         const res: Color = new Color();
         res.rgb = [r, g, b, a];
+        res.premultiplied = premultiplied;
 
         return res;
     }
 
-    static RGB256(r = 0, g = 0, b = 0, a = 255): Color {
-        return Color.RGB(r / 255, g / 255, b / 255, a / 255);
+    static RGB256(r = 0, g = 0, b = 0, a = 255, premultiplied = true): Color {
+        return Color.RGB(r / 255, g / 255, b / 255, a / 255, premultiplied);
     }
 
-    static HSV(h = 0, s = 0, v = 0, a = 1): Color {
-        return Color.RGB(...Color.HSVtoRGB(h, s, v), a);
+    static HSV(h = 0, s = 0, v = 0, a = 1, premultiplied = true): Color {
+        return Color.RGB(...Color.HSVtoRGB(h, s, v), a, premultiplied);
     }
 
     get rgb(): [number, number, number, number] {
@@ -67,7 +73,7 @@ export class Color implements GPUColorDict {
     }
 
     get vec4f(): Float32Array {
-        return new Float32Array(this.rgb);
+        return new Float32Array(Color.premultiplyAlpha(this.rgb));
     }
 
     get hsv(): [number, number, number, number] {

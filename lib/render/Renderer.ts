@@ -77,6 +77,7 @@ export class Renderer {
         this.ctx.configure({
             device: this.device,
             format: this.canvasFormat,
+            alphaMode: "premultiplied"
         });
     }
 

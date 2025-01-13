@@ -19,20 +19,28 @@ setInterval(() => {
         new ohio.Vector2(-100, 100)
     );
 
-    const vertexBufferLayout: GPUVertexBufferLayout = {
-        arrayStride: 8,
-        attributes: [{
-            format: "float32x2",
-            offset: 0,
-            shaderLocation: 0
-        }],
-    };
-
     const pipeline: GPURenderPipeline = new ohio.RenderPipelineBuilder(renderer)
         .setSharedShaderModule(rectShader)
-        .addVertexBuffer(vertexBufferLayout)
+        .addVertexBuffer({
+            arrayStride: 8,
+            attributes: [{
+                format: "float32x2",
+                offset: 0,
+                shaderLocation: 0
+            }],
+        })
         .addFragmentShaderTarget({
-            format: renderer.canvasFormat
+            format: renderer.canvasFormat,
+            blend: {
+                color: {
+                    srcFactor: "one",
+                    dstFactor: "one-minus-src-alpha"
+                },
+                alpha: {
+                    srcFactor: "one",
+                    dstFactor: "one-minus-src-alpha"
+                },
+            }
         })
         .build();
     
@@ -40,7 +48,7 @@ setInterval(() => {
 
     pass.setVertexBuffer(0, rect.vertexBuffer);
     pass.setBindGroup(0, new ohio.BindGroupBuilder(renderer, pipeline)
-        .addBinding(0, new Float32Array([1, 0, 0, 0]))
+        .addBinding(0, new Float32Array(ohio.Color.premultiplyAlpha([1, 0, 0, 1])))
         .build());
     pass.draw(rect.vertices.length / 2);
 
@@ -48,7 +56,7 @@ setInterval(() => {
 
     pass.setVertexBuffer(0, rect.vertexBuffer);
     pass.setBindGroup(0, new ohio.BindGroupBuilder(renderer, pipeline)
-        .addBinding(0, new Float32Array([0, 1, 0, 0]))
+        .addBinding(0, new Float32Array(ohio.Color.premultiplyAlpha([0, 1, 0, 0.5])))
         .build());
     pass.draw(rect.vertices.length / 2);
 

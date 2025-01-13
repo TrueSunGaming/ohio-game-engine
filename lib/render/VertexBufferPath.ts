@@ -1,6 +1,7 @@
 import { Path2 } from "../math/Path2";
 import type { Vector2 } from "../math/Vector2";
 import type { InitializedRenderer } from "./Renderer";
+import type { Triangle2 } from "../math/Triangle2";
 
 export class VertexBufferPath extends Path2 {
     private renderer: InitializedRenderer;
@@ -9,6 +10,14 @@ export class VertexBufferPath extends Path2 {
         super(...points);
 
         this.renderer = renderer;
+    }
+
+    static fromPath(renderer: InitializedRenderer, path: Path2): VertexBufferPath {
+        return new VertexBufferPath(renderer, ...path.points);
+    }
+
+    static fromTriangles(renderer: InitializedRenderer, ...triangles: Triangle2[]): VertexBufferPath {
+        return new VertexBufferPath(renderer, ...triangles.flatMap((t) => t.points));
     }
 
     get vertices(): Float32Array {
